@@ -19,7 +19,7 @@
                     <input type="checkbox" class="form-check-input" id="exampleCheck1">
                     <label class="form-check-label label-login" for="">Recordar</label>
                   </div>
-                  <b-link v-if="auth" to="DashboardLayout">
+                  <b-link to="DashboardLayout">
                      <button type="submit" class="btn btn-outline-warning check" v-on:click="login()">Entrar</button>
                   </b-link>
               </form>
