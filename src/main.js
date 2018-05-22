@@ -10,6 +10,8 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import decode from 'jwt-decode'
 import Vuex from 'vuex'
+import qs from 'qs'
+
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(Vuex)
@@ -26,8 +28,8 @@ const store = new Vuex.Store({
   state: {
     jwt: localStorage.getItem('t'),
     endpoints: {
-      obtainJWT: 'http://apaches.clinicaluren.com.pe/api/v1/auth/obtain_token',
-      refreshJWT: 'http://apaches.clinicaluren.com.pe/api/v1/auth/refresh_token'
+      obtainJWT: 'http://api.a-pachestore.com/v1/auth/obtain_token/',
+      refreshJWT: 'http://api.a-pachestore.com/v1/auth/refresh_token/'
     }
   },
   mutations: {
@@ -41,13 +43,8 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    obtainToken (username, password) {
-      const payload = {
-        username: username,
-        password: password
-      }
-
-      axios.post(this.state.endpoints.obtainJWT, payload)
+    obtainToken (action, payload) {
+      axios.post(this.state.endpoints.obtainJWT, qs.stringify(payload), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
         .then((response) => {
           this.commit('updateToken', response.data.token)
         })
@@ -60,7 +57,7 @@ const store = new Vuex.Store({
         token: this.state.jwt
       }
 
-      axios.post(this.state.endpoints.refreshJWT, payload)
+      axios.post(this.state.endpoints.refreshJWT, qs.stringify(payload))
         .then((response) => {
           this.commit('updateToken', response.data.token)
         })

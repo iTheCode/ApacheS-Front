@@ -7,13 +7,12 @@
               <img src="../assets/img/user.png" class ="logo-user">
               <form class="form form-login" id="login">
                   <div class="form-group col">
-                    <label for="" class="label-login">Email address</label>
-                    <input type="email" class="form-control" id="" v-model="input.username" aria-describedby="emailHelp" placeholder="Enter email">
-                    <small id="emailHelp" class="form-text text-muted">Ingrese el correo registrado</small>
+                    <label for="" class="label-login">Usuario</label>
+                    <input type="email" class="form-control" id="username" v-model="input.username" aria-describedby="emailHelp" placeholder="">
                   </div>
                   <div class="form-group col">
-                    <label for="" class="label-login">Password</label>
-                    <input type="password" class="form-control" id="" v-model="input.password" placeholder="Password">
+                    <label for="" class="label-login">Contraseña</label>
+                    <input type="password" class="form-control" id="password" v-model="input.password" placeholder="">
                   </div>
                   <div class="form-group form-check check">
                     <input type="checkbox" class="form-check-input" id="exampleCheck1">
@@ -71,7 +70,7 @@ margin-left: 0;
 <script>
 import { store } from '../main.js'
 export default {
-  name: '#login',
+  name: 'login',
   data () {
     return {
       input: {
@@ -82,9 +81,12 @@ export default {
   },
   methods: {
     login () {
+      var credentials = {
+        username: this.input.username,
+        password: this.input.password
+      }
       if (this.input.username !== '' && this.input.password !== '') {
-        var log = store.dispatch('obtainToken', this.input.username, this.input.password)
-        console.log(log)
+        store.dispatch('obtainToken', credentials)
       } else {
         console.log('error')
       }
