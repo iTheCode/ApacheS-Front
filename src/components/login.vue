@@ -18,7 +18,7 @@
                     <input type="checkbox" class="form-check-input" id="exampleCheck1">
                     <label class="form-check-label label-login" for="">Recordar</label>
                   </div>
-                  <b-link>
+                  <b-link to="DashboardLayout">
                      <button type="submit" class="btn btn-outline-warning check" v-on:click="login()">Entrar</button>
                   </b-link>
               </form>
@@ -86,7 +86,8 @@ export default {
         password: this.input.password
       }
       if (this.input.username !== '' && this.input.password !== '') {
-        store.dispatch('obtainToken', credentials)
+        var login = store.dispatch('obtainToken', credentials)
+        console.log(login)
       } else {
         console.log('error')
       }

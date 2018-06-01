@@ -14,7 +14,7 @@
           <input type="text" class="form-control form-control-factura" placeholder="cliente o # de factura" aria-label="cliente o # de factura" aria-describedby="basic-addon1">
           <button type="button" class="btn btn-outline-dark"><i class="icon fas fa-search"></i>buscar</button>
       </div>
-    <table class="table">
+    <table class="table" id="register">
   <thead class="thead-dark tr">
     <tr>
       <th scope="col">#</th>
@@ -26,42 +26,13 @@
       <th scope="col">Acciones</th>
     </tr>
   </thead>
+  <Register></Register>
   <tbody>
-    <tr>
+    <tr v-for="register in registers" :key="register">
       <th scope="row">1</th>
       <td>12-01-12</td>
-      <td>Otto</td>
+      <td>{{register.name}}</td>
       <td>@mdo</td>
-      <td><p class="btn-estado bg-success">Pagada</p></td>
-      <td>$100.00</td>
-      <td class="factura-td">
-          <div class="factura-acciones">
-              <a> <i class="btn fa-i fas fa-edit" v-b-tooltip.hover title="editar factura"></i></a>
-              <a> <i class="btn fa-i fas fa-arrow-alt-circle-down" v-b-tooltip.hover title="descargar factura"></i></a>
-              <a> <i class="btn fa-i fas fa-trash-alt" v-b-tooltip.hover title="eliminar Factura"></i></a>
-          </div>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>12-01-12</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-      <td><p class="btn-estado bg-warning">Pendiente</p></td>
-      <td>$100.00</td>
-      <td class="factura-td">
-          <div class="factura-acciones">
-              <a> <i class="btn fa-i fas fa-edit" v-b-tooltip.hover title="editar factura"></i></a>
-              <a> <i class="btn fa-i fas fa-arrow-alt-circle-down" v-b-tooltip.hover title="descargar factura"></i></a>
-              <a> <i class="btn fa-i fas fa-trash-alt" v-b-tooltip.hover title="eliminar Factura"></i></a>
-          </div>
-      </td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>12-01-12</td>
-      <td>the Bird</td>
-      <td>@twitter</td>
       <td><p class="btn-estado bg-success">Pagada</p></td>
       <td>$100.00</td>
       <td class="factura-td">
@@ -131,3 +102,21 @@
  background: #e2e6ea;
 }
 </style>
+<script>
+import axios from 'axios'
+export default {
+  data () {
+    return {
+      registers: []
+    }
+  },
+  mounted () {
+    axios
+      .get('https://swapi.co/api/people/')
+      .then(res => {
+        console.log(res)
+        this.registers = res.data.results
+      })
+  }
+}
+</script>
