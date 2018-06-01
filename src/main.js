@@ -16,6 +16,7 @@ Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(Vuex)
 Vue.use(VueAxios, axios)
+Vue.use(axios)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
@@ -47,6 +48,7 @@ const store = new Vuex.Store({
       axios.post(this.state.endpoints.obtainJWT, qs.stringify(payload), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
         .then((response) => {
           this.commit('updateToken', response.data.token)
+        //  refresh al dashboard
         })
         .catch((error) => {
           console.log(error)
@@ -77,7 +79,7 @@ const store = new Vuex.Store({
         } else if (exp - (Date.now() / 1000) < 1800) {
         // DO NOTHING, DO NOT REFRESH
         } else {
-          // PROMPT USER TO RE-LOGIN, THIS ELSE CLAUSE COVERS THE CONDITION WHERE A TOKEN IS EXPIRED AS WELL
+          // refresh al login
         }
       }
     }
