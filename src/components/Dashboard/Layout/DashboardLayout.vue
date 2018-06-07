@@ -129,3 +129,15 @@ margin-right: 15px;
   padding: 0;
 }
 </style>
+<script>
+import { store } from '../../../main.js'
+export default {
+  data () {
+    return {
+    }
+  },
+  mounted () {
+    store.dispatch('inspectToken')
+  }
+}
+</script>
