@@ -16,7 +16,6 @@ Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(Vuex)
 Vue.use(VueAxios, axios)
-Vue.use(axios)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
@@ -45,13 +44,15 @@ const store = new Vuex.Store({
   },
   actions: {
     obtainToken (action, payload) {
+      console.log('executing obtainJWT')
       axios.post(this.state.endpoints.obtainJWT, qs.stringify(payload), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
         .then((response) => {
           this.commit('updateToken', response.data.token)
-        //  refresh al dashboard
+          window.location = '/DashboardLayout'
         })
         .catch((error) => {
           console.log(error)
+          window.location = '/login'
         })
     },
     refreshToken () {
@@ -74,13 +75,16 @@ const store = new Vuex.Store({
         const exp = decoded.exp
         const origIat = decode.orig_iat
 
-        if (exp - (Date.now() / 1000) < 1800 && (Date.now() / 1000) - origIat < 628200) {
+        if ((Date.now() / 1000) > exp) {
+          // IF TOKEN EXPIRED THEN SEND TO LOGIN PAGE
+          router.push('login')
+        } else if ((Date.now() / 1000) > (exp - 1800) && (Date.now() / 1000) < (origIat + 604800)) {
+          // IF TOKEN EXPIRE IN LESS THAN 30MN BUT STILL IN REFRESH PERIOD THEN REFRESH
           this.dispatch('refreshToken')
-        } else if (exp - (Date.now() / 1000) < 1800) {
-        // DO NOTHING, DO NOT REFRESH
-        } else {
-          // refresh al login
         }
+      } else {
+        // NO TOKEN THEN SEND TO LOGIN PAGE
+        router.push('login')
       }
     }
   }

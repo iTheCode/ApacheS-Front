@@ -17,7 +17,7 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-      path: '/',
+      path: '/login',
       name: 'login',
       component: login
     },
@@ -26,11 +26,11 @@ export default new Router({
       name: 'DashboardLayout',
       component: DashboardLayout,
       children: [
-        { path: '/Factura', component: Factura },
-        { path: '/Inventario', component: Inventario },
-        { path: '/Proveedores', component: Proveedores },
-        { path: '/Usuario', component: Usuario },
-        { path: '/Nueva-factura', component: Nuevafactura }
+        { path: '/facturas', component: Factura },
+        { path: '/inventarios', component: Inventario },
+        { path: '/proveedores', component: Proveedores },
+        { path: '/usuarios', component: Usuario },
+        { path: '/nueva-factura', component: Nuevafactura }
       ]
     }
   ]

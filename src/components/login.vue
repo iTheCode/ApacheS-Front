@@ -18,7 +18,7 @@
                     <input type="checkbox" class="form-check-input" id="exampleCheck1">
                     <label class="form-check-label label-login" for="">Recordar</label>
                   </div>
-                  <b-link to="DashboardLayout">
+                  <b-link>
                      <button type="submit" class="btn btn-outline-warning check" v-on:click="login()">Entrar</button>
                   </b-link>
               </form>
@@ -69,8 +69,10 @@ margin-left: 0;
 </style>
 <script>
 import { store } from '../main.js'
+console.log(this.store)
 export default {
   name: 'login',
+  store: store,
   data () {
     return {
       input: {
@@ -86,12 +88,14 @@ export default {
         password: this.input.password
       }
       if (this.input.username !== '' && this.input.password !== '') {
-        var login = store.dispatch('obtainToken', credentials)
-        console.log(login)
+        store.dispatch('obtainToken', credentials)
       } else {
-        console.log('error')
+        alert('Complete correctamente el usuario y la contraseña.')
+        window.location = '/login'
       }
     }
+  },
+  created: () => {
   }
 }
 </script>
