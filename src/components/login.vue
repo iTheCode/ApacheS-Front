@@ -68,11 +68,8 @@ margin-left: 0;
 }
 </style>
 <script>
-import { store } from '../main.js'
-console.log(this.store)
 export default {
   name: 'login',
-  store: store,
   data () {
     return {
       input: {
@@ -88,14 +85,15 @@ export default {
         password: this.input.password
       }
       if (this.input.username !== '' && this.input.password !== '') {
-        store.dispatch('obtainToken', credentials)
+        this.$store.dispatch('obtainToken', credentials)
       } else {
         alert('Complete correctamente el usuario y la contraseña.')
         window.location = '/login'
       }
     }
   },
-  created: () => {
+  created () {
+    this.$store.dispatch('inspectToken')
   }
 }
 </script>
