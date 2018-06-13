@@ -6,20 +6,20 @@
         <nav class="nav flex-column">
           <img class="logo" src="https://scontent.flim16-3.fna.fbcdn.net/v/t1.0-9/19225885_1526013140784027_2489075820232323471_n.jpg?_nc_cat=0&_nc_eui2=v1%3AAeFRxcicAP17xhBJPzf67HH_K1Ls_gzSw-QZoRlib0emQq6xSIvAqWlWUjZM-bU6el_vbDoXA23T8DA9NwVNuUHW9Ta8fPTojnUp4JUddL7Ngw&oh=76c777c42cb0463b3a5cf7a9675decc1&oe=5B5476A1"/>
           <a class="nav-link">
-            <router-link to="/Factura" class="my-sm-0 nav-link nav-link2">
+            <router-link to="/facturas" class="my-sm-0 nav-link nav-link2">
             <i class="icon fas fa-file-alt"></i>FACTURA
             </router-link>
             <ul class="nav flex-column nav-sub">
               <li class="nav-item nav-sub__item">
                   <a class="nav-link">
-                    <router-link to="/Nueva-factura" class="nav-link nav-sub__link">
+                    <router-link to="/nueva-factura" class="nav-link nav-sub__link">
                       Nueva Factura
                     </router-link>
                   </a>
               </li>
               <li class="nav-item nav-sub__item">
                   <a class="nav-link">
-                    <router-link to="/Factura" class="nav-link nav-sub__link">
+                    <router-link to="/facturas" class="nav-link nav-sub__link">
                       Registro
                     </router-link>
                   </a>
@@ -27,17 +27,17 @@
             </ul>
           </a>
           <a class="nav-link">
-            <router-link to="/Inventario" class="my-sm-0 nav-link nav-link2">
+            <router-link to="/inventarios" class="my-sm-0 nav-link nav-link2">
            <i class="icon fas fa-box-open"></i>INVENTARIO
             </router-link>
           </a>
           <a class="nav-link">
-            <router-link to="/Usuario" class="my-sm-0 nav-link nav-link2">
+            <router-link to="/usuarios" class="my-sm-0 nav-link nav-link2">
             <i class="icon fas fa-user"></i>USUARIO
             </router-link>
           </a>
           <a class="nav-link">
-            <router-link to="/Proveedores" class="my-sm-0 nav-link nav-link2">
+            <router-link to="/proveedores" class="my-sm-0 nav-link nav-link2">
             <i class="icon fas fa-user-tie"></i>PROVEEDOR
             </router-link>
           </a>
