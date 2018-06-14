@@ -40,6 +40,7 @@
   height: 100vh;
   align-content: center;
   justify-content: center;
+  top: 80px;
 }
 .card-login{
   background-image: url('../assets/img/background2.png');
