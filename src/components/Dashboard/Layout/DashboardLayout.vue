@@ -130,4 +130,20 @@ margin-right: 15px;
 }
 </style>
 <script>
+export default {
+  name: 'dashboardlayout',
+  data () {
+    return {
+    }
+  },
+  created () {
+    this.$apacheAPI.get('users/')
+      .then((response) => {
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+}
 </script>
