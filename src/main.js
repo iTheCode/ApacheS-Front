@@ -9,10 +9,12 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import store from './store/store.js'
+import apacheAPI from './store/apacheapi.js'
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(VueAxios, axios)
+Vue.prototype.$apacheAPI = apacheAPI
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
