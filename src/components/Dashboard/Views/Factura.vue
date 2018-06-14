@@ -1,4 +1,4 @@
-<template>
+<template id="table-user">
 <div class="card">
   <div class="card-header">
       <h5><i class="icon fas fa-search"></i>Buscar factura</h5>
@@ -9,45 +9,126 @@
       </a>
   </div>
   <div class="card-body">
-      <div class="card-buscar">
-          <h5 class="card-title">cliente o # de factura</h5>
-          <input type="text" class="form-control form-control-factura" placeholder="cliente o # de factura" aria-label="cliente o # de factura" aria-describedby="basic-addon1">
-          <button type="button" class="btn btn-outline-dark"><i class="icon fas fa-search"></i>buscar</button>
-      </div>
-    <table class="table" id="register">
-  <thead class="thead-dark tr">
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Fecha</th>
-      <th scope="col">cliente</th>
-      <th scope="col">Vendedor</th>
-      <th scope="col">Estado</th>
-      <th scope="col">Total</th>
-      <th scope="col">Acciones</th>
-    </tr>
-  </thead>
-  <Register></Register>
-  <tbody>
-    <tr v-for="register in registers" :key="register">
-      <th scope="row">1</th>
-      <td>12-01-12</td>
-      <td>{{register.name}}</td>
-      <td>@mdo</td>
-      <td><p class="btn-estado bg-success">Pagada</p></td>
-      <td>$100.00</td>
-      <td class="factura-td">
-          <div class="factura-acciones">
-              <a> <i class="btn fa-i fas fa-edit" v-b-tooltip.hover title="editar factura"></i></a>
-              <a> <i class="btn fa-i fas fa-arrow-alt-circle-down" v-b-tooltip.hover title="descargar factura"></i></a>
-              <a> <i class="btn fa-i fas fa-trash-alt" v-b-tooltip.hover title="eliminar Factura"></i></a>
-          </div>
-      </td>
-    </tr>
-  </tbody>
-</table>
+    <template>
+    <b-container fluid>
+        <!-- User Interface controls -->
+        <b-row>
+        <!--buscador de tabla-->
+            <b-col md="6" class="my-1">
+                <b-form-group horizontal label="Buscar" class="mb-0">
+                <b-input-group>
+                    <b-form-input v-model="filter" placeholder="cliente o # de factura" />
+                    <b-input-group-append>
+                    <b-btn :disabled="!filter" @click="filter = ''" class="btn-clear">Limpiar</b-btn>
+                    </b-input-group-append>
+                </b-input-group>
+                </b-form-group>
+            </b-col>
+        </b-row>
+        <!-- Main table element -->
+        <b-table show-empty
+                stacked="md"
+                :items="registers"
+                :fields="fields"
+                :current-page="currentPage"
+                :per-page="perPage"
+                :filter="filter"
+                :sort-by.sync="sortBy"
+                :sort-desc.sync="sortDesc"
+                :sort-direction="sortDirection"
+                @filtered="onFiltered"
+        >
+            <!-- opciones de la tabla -->
+            <template slot-scope="row">{{registers.height }}</template>
+            <template slot-scope="row">{{registers.date}}</template>
+            <template slot-scope="row">{{registers.name}}</template>
+            <template slot-scope="row">{{registers.gender}}</template>
+            <template slot="isActive" slot-scope="row">{{(registers.gender)?'female':'male'}}</template>
+            <!-- acciones -->
+            <template slot="actions" slot-scope="row">
+                <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
+                <b-button size="sm" @click.stop="info(row.item, row.index, $event.target)" class="mr-1 btn fa-i fas fa-edit" variant="outline-dark" v-b-tooltip.hover title="editar factura">
+                </b-button>
+                <b-button size="sm" @click.stop="info(row.item, row.index, $event.target)" class="mr-1 btn fa-i fas fa-arrow-alt-circle-down" variant="outline-dark" v-b-tooltip.hover title="descargar factura">
+                </b-button>
+                <b-button size="sm" @click.stop="info(row.item, row.index, $event.target)" class="mr-1 btn fa-i fas fa-trash-alt" variant="outline-dark" v-b-tooltip.hover title="eliminar Factura">
+                </b-button>
+            </template>
+        </b-table>
+        <!--paginacion -->
+        <b-row>
+        <b-col md="6" class="my-1">
+            <b-pagination align="right" :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0 pagination-general" />
+        </b-col>
+        </b-row>
+
+        <!-- Info modal -->
+        <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" ok-only>
+        <pre>{{ modalInfo.content }}</pre>
+        </b-modal>
+
+      </b-container>
+     </template>
   </div>
 </div>
 </template>
+<script>
+import axios from 'axios'
+export default {
+  data () {
+    return {
+      registers: [],
+      fields: [
+        {key: 'height', label: '#'},
+        'Fecha',
+        { key: 'name', label: 'Nombre de cliente', sortable: true, sortDirection: 'desc' },
+        {key: 'gender', label: 'Vendedor'},
+        { key: 'isActive', label: 'Estado' },
+        { key: 'mass', label: 'Precio', sortable: true, 'class': 'text-center' },
+        { key: 'actions', label: 'Acciones' }
+      ],
+      currentPage: 1,
+      perPage: 6,
+      sortBy: null,
+      filter: null,
+      modalInfo: { title: '', content: '' }
+    }
+  },
+  mounted () {
+    axios
+      .get('https://swapi.co/api/people/')
+      .then(res => {
+        console.log(res)
+        this.registers = res.data.results
+      })
+  },
+  computed: {
+    sortOptions () {
+      // Create an options list from our fields
+      return this.fields
+        .filter(f => f.sortable)
+        .map(f => { return { text: f.label, value: f.key } })
+    }
+  },
+  methods: {
+    info (item, index, button) {
+      this.modalInfo.title = `Row index: ${index}`
+      this.modalInfo.content = JSON.stringify(item, null, 2)
+      this.$root.$emit('bv::show::modal', 'modalInfo', button)
+    },
+    resetModal () {
+      this.modalInfo.title = ''
+      this.modalInfo.content = ''
+    },
+    onFiltered (filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
+    }
+  }
+}
+</script>
+
 <style>
 /* estilos del card factura - general*/
 .card{
@@ -77,6 +158,14 @@
 .table{
     margin-top: 20px;
 }
+.btn-clear:disabled{
+    color:#ffd351;
+    background-color: #707579;
+}
+.btn-clear{
+    background: #343a40;
+    color:#ffc107;
+}
 .factura-td{
     width: 160px;
 }
@@ -101,22 +190,16 @@
 .fa-i:hover{
  background: #e2e6ea;
 }
-</style>
-<script>
-import axios from 'axios'
-export default {
-  data () {
-    return {
-      registers: []
-    }
-  },
-  mounted () {
-    axios
-      .get('https://swapi.co/api/people/')
-      .then(res => {
-        console.log(res)
-        this.registers = res.data.results
-      })
-  }
+/* Estilo general de paginacion*/
+.page-item.active .page-link{
+  background-color: #343a40;
+  border: 1px solid #ffc107;
+  color:#ffc107;
 }
-</script>
+.page-link{
+  color:#000;
+}
+.page-link:hover{
+  color:#000;
+}
+</style>
