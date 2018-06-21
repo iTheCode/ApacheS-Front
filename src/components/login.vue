@@ -40,13 +40,13 @@
   height: 100vh;
   align-content: center;
   justify-content: center;
-  top: 80px;
 }
 .card-login{
   background-image: url('../assets/img/background2.png');
   background-repeat: no-repeat;
   background-size: 100% 100%;
     border: 1px solid #ffc107;
+    top: 90px;
 }
 .logo-user{
   width: 100px;

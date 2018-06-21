@@ -25,6 +25,16 @@
                 </b-form-group>
             </b-col>
         </b-row>
+        <transition name="fade">
+            <p class="alert alert-success" v-if="errorMessage">
+                {{ errorMessage }}
+                <i class="material-icons prefix">error</i>
+            </p>
+            <p class="alert alert-danger" v-if="successMessage">
+                {{ successMessage }}
+                <i class="material-icons prefix">check_circle</i>
+            </p>
+        </transition>
         <!-- Main table element -->
         <b-table show-empty
                 stacked="md"
@@ -47,11 +57,11 @@
             <!-- acciones -->
             <template slot="actions" slot-scope="row">
                 <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-                <b-button size="sm" @click.stop="info(row.item, row.index, $event.target)" class="mr-1 btn fa-i fas fa-edit" variant="outline-dark" v-b-tooltip.hover title="editar factura">
+                <b-button size="sm" @click.stop="info(row.item, row.index, $event.target)" class="mr-1 btn fa-i fas fa-edit" variant="outline-dark" v-b-modal.editar v-b-tooltip.hover title="editar factura">
                 </b-button>
                 <b-button size="sm" @click.stop="info(row.item, row.index, $event.target)" class="mr-1 btn fa-i fas fa-arrow-alt-circle-down" variant="outline-dark" v-b-tooltip.hover title="descargar factura">
                 </b-button>
-                <b-button size="sm" @click.stop="info(row.item, row.index, $event.target)" class="mr-1 btn fa-i fas fa-trash-alt" variant="outline-dark" v-b-tooltip.hover title="eliminar Factura">
+                <b-button size="sm" @click="deleteRow(register)" class="mr-1 btn fa-i fas fa-trash-alt" variant="outline-dark" v-b-tooltip.hover title="eliminar Factura">
                 </b-button>
             </template>
         </b-table>
@@ -61,19 +71,30 @@
             <b-pagination align="right" :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0 pagination-general" />
         </b-col>
         </b-row>
-
-        <!-- Info modal -->
-        <b-modal id="modalInfo" @hide="resetModal" :title="modalInfo.title" ok-only>
-        <pre>{{ modalInfo.content }}</pre>
-        </b-modal>
-
       </b-container>
      </template>
-  </div>
+    <!-- model de editar -->
+    </div>
+    <b-modal id="editar" title="" @submit.prevent="updateStudent">
+        <div>
+            <b-form-group horizontal
+                            :label-cols="2"
+                            label="Nombre"
+                            label-for="input_default">
+                <b-form-input id="input_default" name="name"></b-form-input>
+            </b-form-group>
+            <b-form-group horizontal
+                            :label-cols="2"
+                            label="precio"
+                            label-for="input_default">
+                <b-form-input id="input_default" name="precio"></b-form-input>
+                <input name="id" type="hidden" required>
+            </b-form-group>
+        </div>
+    </b-modal>
 </div>
 </template>
 <script>
-import axios from 'axios'
 export default {
   data () {
     return {
@@ -91,12 +112,14 @@ export default {
       perPage: 6,
       sortBy: null,
       filter: null,
-      modalInfo: { title: '', content: '' }
+      modalInfo: { title: '', content: '' },
+      errorMessage: '',
+      successMessage: ''
     }
   },
   mounted () {
-    axios
-      .get('https://swapi.co/api/people/')
+    this.$apacheAPI
+      .get('sale/')
       .then(res => {
         console.log(res)
         this.registers = res.data.results
@@ -113,8 +136,7 @@ export default {
   methods: {
     info (item, index, button) {
       this.modalInfo.title = `Row index: ${index}`
-      this.modalInfo.content = JSON.stringify(item, null, 2)
-      this.$root.$emit('bv::show::modal', 'modalInfo', button)
+      this.modalInfo.content = JSON.stringify(item.name, item.mass)
     },
     resetModal () {
       this.modalInfo.title = ''
@@ -124,6 +146,24 @@ export default {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length
       this.currentPage = 1
+    },
+    updateStudent (e) {
+      this.$apacheAPI.put('sale/')
+        .then(res => {
+          this.setMessages(res)
+        })
+    },
+    setMessages (res) {
+      if (res.data.error) {
+        this.errorMessage = res.data.message
+      } else {
+        this.successMessage = res.data.message
+      }
+
+      setTimeout(() => {
+        this.errorMessage = false
+        this.successMessage = false
+      }, 2000)
     }
   }
 }
