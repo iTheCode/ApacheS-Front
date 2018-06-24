@@ -49,18 +49,18 @@
             <template slot-scope="row">{{registers.dni}}</template>
             <template slot-scope="row">{{registers.phone}}</template>
             <!-- acciones -->
-            <template slot="actions" slot-scope="row">
+            <template slot="actions" slot-scope="registers">
                 <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-                <b-button size="sm" v-on:click="getStudent($event)" class="mr-1 btn fa-i fas fa-edit" variant="outline-dark" v-b-modal.editar v-b-tooltip.hover title="editar factura">
+                <b-button size="sm" @click="getClient(registers.index)" class="mr-1 btn fa-i fas fa-edit" variant="outline-dark" v-b-modal.editar v-b-tooltip.hover title="editar factura">
                 </b-button>
-                <b-button size="sm" @click="deleteRow(registers.id)" class="mr-1 btn fa-i fas fa-trash-alt" variant="outline-dark" v-b-modal.eliminar v-b-tooltip.hover title="eliminar Factura">
+                <b-button size="sm" @click="deleteConfirm(registers.index)" class="mr-1 btn fa-i fas fa-trash-alt" variant="outline-dark" v-b-modal.eliminar v-b-tooltip.hover title="eliminar Factura">
                 </b-button>
             </template>
         </b-table>
         <!--paginacion -->
         <b-row>
         <b-col md="6" class="my-1">
-            <b-pagination align="right" :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0 pagination-general" />
+            <b-pagination align="right" :total-rows="20" :per-page="perPage" v-model="currentPage" class="my-0 pagination-general" />
         </b-col>
         </b-row>
       </b-container>
@@ -90,34 +90,34 @@
         </form>
     </b-modal>
     <!-- model de editar -->
-    <b-modal id="editar" title="editar cliente">
+    <b-modal id="editar" title="editar cliente" ref="editDialog" stacked="md" :item="editDialog">
         <form @submit.prevent="updateRegistro">
             <b-form-group horizontal
                             :label-cols="2"
                             label="Nombre"
                             >
-                <b-form-input v-model="registers.name" name="name"></b-form-input>
+                <b-form-input v-model="editDialog.first_name" name="name"></b-form-input>
             </b-form-group>
             <b-form-group horizontal
                             :label-cols="2"
                             label="DNI"
                             >
-                <b-form-input v-model="activeRegistro.dni" name="dni"></b-form-input>
+                <b-form-input v-model="editDialog.dni" name="dni"></b-form-input>
             </b-form-group>
              <b-form-group horizontal
                             :label-cols="2"
                             label="celular"
                             >
-                <b-form-input v-model="activeRegistro.phone" name="phone"></b-form-input>
+                <b-form-input v-model="editDialog.phone" name="phone"></b-form-input>
             </b-form-group>
             <input name="id" type="hidden" required>
         </form>
     </b-modal>
     <!-- model de eliminar -->
-    <b-modal id="eliminar" title="eliminar cliente">
+    <b-modal id="eliminar" title="eliminar cliente" ref="confirmDialog" stacked="md" :item="confirmDialog">
         <form @submit.prevent="deleteStudent">
-            <p class="my-4">¿Estás seguro de eliminar al cliente: <b>{{activeRegistro.name}}</b>.</p>
-            <input v-model="activeRegistro.id" name="id" type="hidden" required>
+            <p class="my-4">¿Estás seguro de eliminar al cliente: <b>{{confirmDialog.first_name}}</b>.</p>
+            <input v-model="confirmDialog.id" name="id" type="hidden" required>
         </form>
     </b-modal>
 </div>
@@ -128,6 +128,8 @@ export default {
   data () {
     return {
       registers: [],
+      confirmDialog: [],
+      editDialog: [],
       fields: [
         {key: 'id', label: 'id'},
         { key: 'first_name', label: 'Nombre de cliente' },
@@ -144,10 +146,12 @@ export default {
     }
   },
   mounted () {
-    this.$apacheAPI
-      .get('client/')
+    this.$apacheAPI.get('client/')
       .then(res => {
         this.registers = res.data
+      })
+      .catch((error) => {
+        console.log(error)
       })
   },
   computed: {
@@ -172,13 +176,22 @@ export default {
       this.totalRows = filteredItems.length
       this.currentPage = 1
     },
-    getStudent (index) {
-      console.log(index)
+    getClient (index) {
+      this.$apacheAPI.get('client/' + this.registers[index].id + '/')
+        .then(res => {
+          this.editDialog = res.data
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     createStudent (e) {
       this.$apacheAPI.put('client/', new FormData(e.target))
         .then(res => {
           this.setMessages(res)
+        })
+        .catch((error) => {
+          console.log(error)
         })
     },
     updateRegister (e) {
@@ -197,11 +210,17 @@ export default {
           this.setMessages(res)
         })
     },
-    deleteStudent (e) {
-      this.$apacheAPI.delete('client/', new FormData(e.target))
+    deleteConfirm (index) {
+      this.$apacheAPI.get('client/' + this.registers[index].id + '/')
         .then(res => {
-          this.setMessages(res)
+          this.confirmDialog = res.data
         })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+    deleteClient (e) {
+      console.log(this.$ref.confirmDialog.id)
     },
     setMessages (res) {
       if (res.data.error) {
