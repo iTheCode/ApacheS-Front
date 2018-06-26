@@ -67,19 +67,27 @@
      </template>
     </div>
     <!-- model de agregar -->
-    <b-modal id="agregar" title="agregar cliente">
-        <form @submit.prevent="createStudent">
+    <b-modal hide-footer id="agregar" title="Agregar Cliente">
+        <form @submit.prevent="createClient">
             <b-form-group horizontal
                             :label-cols="2"
                             label="Nombre"
                             >
-                <b-form-input name="name" placeholder="nombre" required></b-form-input>
+                <b-form-input name="first_
+                
+                name" placeholder="nombre" required></b-form-input>
+            </b-form-group>
+            <b-form-group horizontal
+                            :label-cols="2"
+                            label="Apellido"
+                            >
+                <b-form-input name="last_name" placeholder="apellido" required></b-form-input>
             </b-form-group>
             <b-form-group horizontal
                             :label-cols="2"
                             label="DNI"
                             >
-                <b-form-input name="dni" placeholder="dni"></b-form-input>
+                <b-form-input name="dni" placeholder="DNI"></b-form-input>
             </b-form-group>
              <b-form-group horizontal
                             :label-cols="2"
@@ -87,10 +95,14 @@
                             >
                 <b-form-input name="phone" placeholder="celular"></b-form-input>
             </b-form-group>
+          <div class="d-flex justify-content-end">
+            <b-btn class="" @click="createClient" variant="dark">OK</b-btn>
+            <input v-model="confirmDialog.id" name="id" type="hidden" required>
+          </div>
         </form>
     </b-modal>
     <!-- model de editar -->
-    <b-modal id="editar" title="editar cliente" ref="editDialog" stacked="md" :item="editDialog">
+    <b-modal hide-footer id="editar" title="Editar Cliente" ref="editDialog" stacked="md" :item="editDialog">
         <form @submit.prevent="updateRegistro">
             <b-form-group horizontal
                             :label-cols="2"
@@ -110,28 +122,35 @@
                             >
                 <b-form-input v-model="editDialog.phone" name="phone"></b-form-input>
             </b-form-group>
-            <input name="id" type="hidden" required>
+          <div class="d-flex justify-content-end">
+            <b-btn class="" variant="dark">Guardar</b-btn>
+            <input v-model="confirmDialog.id" name="id" type="hidden" required>
+          </div>
         </form>
     </b-modal>
     <!-- model de eliminar -->
-    <b-modal id="eliminar" title="eliminar cliente" ref="confirmDialog" stacked="md" :item="confirmDialog">
+    <b-modal hide-footer id="eliminar" title="eliminar cliente" ref="confirmDialog" stacked="md" :item="confirmDialog">
         <form @submit.prevent="deleteStudent">
             <p class="my-4">¿Estás seguro de eliminar al cliente: <b>{{confirmDialog.first_name}}</b>.</p>
-            <input v-model="confirmDialog.id" name="id" type="hidden" required>
+        <div class="d-flex justify-content-end">
+          <b-btn class="" variant="dark" @click="deleteClient(registers.index)">OK</b-btn>
+          <input v-model="confirmDialog.id" name="id" type="hidden" required>
+        </div>
         </form>
     </b-modal>
 </div>
 </template>
 <script>
 import qs from 'qs'
+const registers = []
 export default {
   data () {
     return {
-      registers: [],
+      registers: registers,
       confirmDialog: [],
       editDialog: [],
       fields: [
-        {key: 'id', label: 'id'},
+        {key: 'id', label: '#'},
         { key: 'first_name', label: 'Nombre de cliente' },
         {key: 'dni', label: 'DNI'},
         { key: 'phone', label: 'Celular' },
@@ -141,6 +160,7 @@ export default {
       perPage: 6,
       filter: null,
       errorMessage: '',
+      totalRows: registers.length,
       successMessage: '',
       activeRegistro: {}
     }
@@ -185,13 +205,10 @@ export default {
           console.log(error)
         })
     },
-    createStudent (e) {
-      this.$apacheAPI.put('client/', new FormData(e.target))
+    createClient () {
+      this.$apacheAPI.post('client/add/')
         .then(res => {
-          this.setMessages(res)
-        })
-        .catch((error) => {
-          console.log(error)
+          console.log(res)
         })
     },
     updateRegister (e) {
@@ -214,13 +231,25 @@ export default {
       this.$apacheAPI.get('client/' + this.registers[index].id + '/')
         .then(res => {
           this.confirmDialog = res.data
+          console.log(this.confirmDialog)
         })
         .catch((error) => {
           console.log(error)
         })
     },
-    deleteClient (e) {
-      console.log(this.$ref.confirmDialog.id)
+    deleteClient (index) {
+      // this.$apacheAPI.delete('client/' + this.registers[index])
+      //   .then(res => {
+      //     this.confirmDialog = res.data
+      //     console.log(this.confirmDialog)
+      //   })
+      //   .catch((error) => {
+      //     console.log(error)
+      //   })
+      this.$apacheAPI.delete('client/' + this.id)
+        .then(res => {
+          this.registers.splice(index, 1)
+        })
     },
     setMessages (res) {
       if (res.data.error) {
