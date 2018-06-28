@@ -43,9 +43,6 @@
                 :current-page="currentPage"
                 :per-page="perPage"
                 :filter="filter"
-                :sort-by.sync="sortBy"
-                :sort-desc.sync="sortDesc"
-                :sort-direction="sortDirection"
                 @filtered="onFiltered"
         >
             <!-- opciones de la tabla -->
@@ -95,10 +92,11 @@
 </div>
 </template>
 <script>
+const registers = []
 export default {
   data () {
     return {
-      registers: [],
+      registers: registers,
       fields: [
         {key: 'height', label: '#'},
         'Fecha',
@@ -113,6 +111,7 @@ export default {
       sortBy: null,
       filter: null,
       modalInfo: { title: '', content: '' },
+      totalRows: registers.length,
       errorMessage: '',
       successMessage: ''
     }
