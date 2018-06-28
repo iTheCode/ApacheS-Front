@@ -7,7 +7,7 @@ import DashboardLayout from '@/components/Dashboard/Layout/DashboardLayout'
 import Factura from '@/components/Dashboard/Views/Factura'
 import Inventario from '@/components/Dashboard/Views/Inventario'
 import Proveedores from '@/components/Dashboard/Views/Proveedores'
-import Usuario from '@/components/Dashboard/Views/Usuario'
+import Clientes from '@/components/Dashboard/Views/Cliente'
 import Nuevafactura from '@/components/Dashboard/Views/Nueva-factura'
 import { Modal } from 'bootstrap-vue/es/components'
 Vue.use(Modal)
@@ -35,7 +35,7 @@ export default new Router({
         { path: '/facturas', component: Factura },
         { path: '/inventarios', component: Inventario },
         { path: '/proveedores', component: Proveedores },
-        { path: '/usuarios', component: Usuario },
+        { path: '/clientes', component: Clientes },
         { path: '/nueva-factura', component: Nuevafactura }
       ]
     }

@@ -73,9 +73,7 @@
                             :label-cols="2"
                             label="Nombre"
                             >
-                <b-form-input name="first_
-                
-                name" placeholder="nombre" required></b-form-input>
+                <b-form-input name="first_name" placeholder="nombre" required></b-form-input>
             </b-form-group>
             <b-form-group horizontal
                             :label-cols="2"
@@ -205,8 +203,8 @@ export default {
           console.log(error)
         })
     },
-    createClient () {
-      this.$apacheAPI.post('client/add/')
+    createClient (index) {
+      this.$apacheAPI.post('client/add/' + this.registers[index].id + '/')
         .then(res => {
           console.log(res)
         })

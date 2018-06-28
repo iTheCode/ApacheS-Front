@@ -32,8 +32,8 @@
             </router-link>
           </a>
           <a class="nav-link">
-            <router-link to="/usuarios" class="my-sm-0 nav-link nav-link2">
-            <i class="icon fas fa-user"></i>USUARIO
+            <router-link to="/clientes" class="my-sm-0 nav-link nav-link2">
+            <i class="icon fas fa-user"></i>CLIENTE
             </router-link>
           </a>
           <a class="nav-link">
