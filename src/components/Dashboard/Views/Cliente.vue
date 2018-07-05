@@ -121,18 +121,16 @@
                 <b-form-input v-model="editDialog.phone" name="phone"></b-form-input>
             </b-form-group>
           <div class="d-flex justify-content-end">
-            <b-btn class="" variant="dark">Guardar</b-btn>
-            <input v-model="confirmDialog.id" name="id" type="hidden" required>
+            <b-btn class="" variant="dark" @click="editClient(confirmDialog)">Guardar</b-btn>
           </div>
         </form>
     </b-modal>
     <!-- model de eliminar -->
     <b-modal hide-footer id="eliminar" title="eliminar cliente" ref="confirmDialog" stacked="md" :item="confirmDialog">
         <form @submit.prevent="deleteStudent">
-            <p class="my-4">¿Estás seguro de eliminar al cliente: <b>{{confirmDialog.first_name}}</b>.</p>
+            <p class="my-4">¿Estás seguro de eliminar al cliente: <b> {{confirmDialog.first_name}}</b>.</p>
         <div class="d-flex justify-content-end">
-          <b-btn class="" variant="dark" @click="deleteClient(registers.index)">OK</b-btn>
-          <input v-model="confirmDialog.id" name="id" type="hidden" required>
+          <b-btn class="" variant="dark" @click="deleteClient(confirmDialog)">OK</b-btn>
         </div>
         </form>
     </b-modal>
@@ -204,18 +202,16 @@ export default {
         })
     },
     createClient (index) {
-      this.$apacheAPI.post('client/add/' + this.registers[index].id + '/')
+      this.$apacheAPI.post('client/add/')
         .then(res => {
           console.log(res)
         })
     },
-    updateRegister (e) {
+    editClient (item) {
       var obj = {'name': this.name, 'dni': this.dni, 'phone': this.phone}
       // console.log(obj)
       var strngObj = qs.stringify(obj)
-      console.log(this.id)
-      console.log(strngObj)
-      this.$apacheAPI.put('client/', this.id,
+      this.$apacheAPI.put('client/' + item.id + '/',
         strngObj, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -229,24 +225,15 @@ export default {
       this.$apacheAPI.get('client/' + this.registers[index].id + '/')
         .then(res => {
           this.confirmDialog = res.data
-          console.log(this.confirmDialog)
         })
         .catch((error) => {
           console.log(error)
         })
     },
-    deleteClient (index) {
-      // this.$apacheAPI.delete('client/' + this.registers[index])
-      //   .then(res => {
-      //     this.confirmDialog = res.data
-      //     console.log(this.confirmDialog)
-      //   })
-      //   .catch((error) => {
-      //     console.log(error)
-      //   })
-      this.$apacheAPI.delete('client/' + this.id)
+    deleteClient (item) {
+      this.$apacheAPI.delete('client/' + item.id + '/')
         .then(res => {
-          this.registers.splice(index, 1)
+          this.registers.splice(item.id, 1)
         })
     },
     setMessages (res) {
