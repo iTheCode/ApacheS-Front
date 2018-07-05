@@ -109,7 +109,7 @@
                 <b-form-input name="phone" placeholder="celular"></b-form-input>
             </b-form-group>
           <div class="d-flex justify-content-end">
-            <b-btn class="" @click="createProvider" variant="dark">OK</b-btn>
+            <b-btn class="" type="submit" @click="createProvider" variant="dark">OK</b-btn>
             <input v-model="confirmDialog.id" name="id" type="hidden" required>
           </div>
         </form>
@@ -245,9 +245,10 @@ export default {
         })
     },
     createProvider (index) {
-      this.$apacheAPI.post('provider/add/' + this.registers[index].id + '/')
+      this.$apacheAPI.post('provider/', new FormData(index.target))
         .then(res => {
           console.log(res)
+          location.reload()
         })
     },
     updateRegister (e) {

@@ -71,44 +71,43 @@
     <b-modal hide-footer id="agregar" title="Agregar Producto">
         <form @submit.prevent="createProduct">
             <b-form-group horizontal
-                            :label-cols="2"
+                            :label-cols="3"
                             label="Nombre"
                             >
                 <b-form-input name="product_name" placeholder="nombre" required></b-form-input>
             </b-form-group>
             <b-form-group horizontal
-                            :label-cols="2"
+                            :label-cols="3"
                             label="Cantidad"
                             >
                 <b-form-input name="quantity" placeholder="cantidad" required></b-form-input>
             </b-form-group>
             <b-form-group horizontal
-                            :label-cols="2"
-                            label="Precio"
+                            :label-cols="3"
+                            label="Precio Venta"
                             >
                 <b-form-input name="unit_price_sale" placeholder="precio"></b-form-input>
             </b-form-group>
             <b-form-group horizontal
-                            :label-cols="2"
-                            label="Precio"
+                            :label-cols="3"
+                            label="Precio Compra"
                             >
                 <b-form-input name="unit_price_purchase" placeholder="precio"></b-form-input>
             </b-form-group>
             <b-form-group horizontal
-                            :label-cols="2"
+                            :label-cols="3"
                             label="IGV"
                             >
                 <b-form-input name="igv" placeholder="IGV"></b-form-input>
             </b-form-group>
              <b-form-group horizontal
-                            :label-cols="2"
+                            :label-cols="3"
                             label="Descr."
                             >
                 <b-form-input name="description" placeholder="descripción"></b-form-input>
             </b-form-group>
           <div class="d-flex justify-content-end">
-            <b-btn class="" @click="createProduct" variant="dark">OK</b-btn>
-            <input v-model="confirmDialog.id" name="id" type="hidden" required>
+            <b-btn class="" type="submit" @click="createProduct" variant="dark">OK</b-btn>
           </div>
         </form>
     </b-modal>
@@ -150,8 +149,7 @@
         <form @submit.prevent="deleteStudent">
             <p class="my-4">¿Estás seguro de eliminar al Producto: <b>{{confirmDialog.product_name}}</b>.</p>
         <div class="d-flex justify-content-end">
-          <b-btn class="" variant="dark" @click="deleteProduct(registers.index)">OK</b-btn>
-          <input v-model="confirmDialog.id" name="id" type="hidden" required>
+          <b-btn class="" variant="dark" @click="deleteProduct(confirmDialog)">OK</b-btn>
         </div>
         </form>
     </b-modal>
@@ -224,49 +222,37 @@ export default {
         })
     },
     createProduct (index) {
-      this.$apacheAPI.post('product/add/' + this.registers[index].id + '/')
+      this.$apacheAPI.post('product/', new FormData(index.target))
         .then(res => {
           console.log(res)
+          location.reload()
         })
     },
-    updateRegister (e) {
-      var obj = {'name': this.name, 'quantity': this.quantity, 'description': this.description}
-      // console.log(obj)
+    editProduct (item) {
+      var obj = {'name': item.first_name, 'dni': item.dni, 'phone': item.phone}
+      console.log(obj)
       var strngObj = qs.stringify(obj)
-      console.log(this.id)
       console.log(strngObj)
-      this.$apacheAPI.put('product/', this.id,
-        strngObj, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }
-        })
+      this.$apacheAPI.put('product/' + item.id + '/', strngObj)
         .then(res => {
-          this.setMessages(res)
+          this.editDialog = res.data
+          location.reload()
         })
     },
     deleteConfirm (index) {
       this.$apacheAPI.get('product/' + this.registers[index].id + '/')
         .then(res => {
           this.confirmDialog = res.data
-          console.log(this.confirmDialog)
         })
         .catch((error) => {
           console.log(error)
         })
     },
-    deleteProduct (index) {
-      // this.$apacheAPI.delete('Product/' + this.registers[index])
-      //   .then(res => {
-      //     this.confirmDialog = res.data
-      //     console.log(this.confirmDialog)
-      //   })
-      //   .catch((error) => {
-      //     console.log(error)
-      //   })
-      this.$apacheAPI.delete('product/' + this.id)
+    deleteProduct (item) {
+      this.$apacheAPI.delete('product/' + item.id + '/')
         .then(res => {
-          this.registers.splice(index, 1)
+          this.registers.splice(item.id, 1)
+          location.reload()
         })
     },
     setMessages (res) {
