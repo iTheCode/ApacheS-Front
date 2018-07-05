@@ -196,7 +196,12 @@ export default {
       errorMessage: '',
       totalRows: registers.length,
       successMessage: '',
-      activeRegistro: {}
+      activeRegistro: {},
+      strngObj: {
+        ame: '',
+        dni: '',
+        phone: ''
+      }
     }
   },
   mounted () {

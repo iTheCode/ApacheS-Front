@@ -46,6 +46,7 @@
             <!-- opciones de la tabla -->
              <template slot-scope="row">{{registers.id}}</template>
             <template slot-scope="row">{{registers.first_name}}</template>
+            <template slot-scope="row">{{registers.last_name}}</template>
             <template slot-scope="row">{{registers.dni}}</template>
             <template slot-scope="row">{{registers.phone}}</template>
             <!-- acciones -->
@@ -94,19 +95,24 @@
                 <b-form-input name="phone" placeholder="celular"></b-form-input>
             </b-form-group>
           <div class="d-flex justify-content-end">
-            <b-btn class="" @click="createClient" variant="dark">OK</b-btn>
-            <input v-model="confirmDialog.id" name="id" type="hidden" required>
+            <b-btn class="" type="submit" @click="createClient" variant="dark">OK</b-btn>
           </div>
         </form>
     </b-modal>
     <!-- model de editar -->
-    <b-modal hide-footer id="editar" title="Editar Cliente" ref="editDialog" stacked="md" :item="editDialog">
-        <form @submit.prevent="updateRegistro">
+    <b-modal hide-footer id="editar" title="Editar Cliente" ref="editDialog" stacked="md" :item="confirmDialog">
+        <form @submit.prevent="editClient">
             <b-form-group horizontal
                             :label-cols="2"
                             label="Nombre"
                             >
                 <b-form-input v-model="editDialog.first_name" name="name"></b-form-input>
+            </b-form-group>
+            <b-form-group horizontal
+                            :label-cols="2"
+                            label="Apellido"
+                            >
+                <b-form-input v-model="editDialog.last_name" name="last_name"></b-form-input>
             </b-form-group>
             <b-form-group horizontal
                             :label-cols="2"
@@ -121,7 +127,7 @@
                 <b-form-input v-model="editDialog.phone" name="phone"></b-form-input>
             </b-form-group>
           <div class="d-flex justify-content-end">
-            <b-btn class="" variant="dark" @click="editClient(confirmDialog)">Guardar</b-btn>
+            <b-btn class="" variant="dark" @click="editClient(editDialog, confirmDialog)">Guardar</b-btn>
           </div>
         </form>
     </b-modal>
@@ -148,6 +154,7 @@ export default {
       fields: [
         {key: 'id', label: '#'},
         { key: 'first_name', label: 'Nombre de cliente' },
+        { key: 'last_name', label: 'Apellido de cliente' },
         {key: 'dni', label: 'DNI'},
         { key: 'phone', label: 'Celular' },
         { key: 'actions', label: 'Acciones' }
@@ -202,23 +209,21 @@ export default {
         })
     },
     createClient (index) {
-      this.$apacheAPI.post('client/add/')
+      this.$apacheAPI.post('client/', new FormData(index.target))
         .then(res => {
           console.log(res)
+          location.reload()
         })
     },
     editClient (item) {
-      var obj = {'name': this.name, 'dni': this.dni, 'phone': this.phone}
-      // console.log(obj)
+      var obj = {'name': item.first_name, 'dni': item.dni, 'phone': item.phone}
+      console.log(obj)
       var strngObj = qs.stringify(obj)
-      this.$apacheAPI.put('client/' + item.id + '/',
-        strngObj, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }
-        })
+      console.log(strngObj)
+      this.$apacheAPI.put('client/' + item.id + '/', strngObj)
         .then(res => {
-          this.setMessages(res)
+          this.editDialog = res.data
+          location.reload()
         })
     },
     deleteConfirm (index) {
@@ -234,6 +239,7 @@ export default {
       this.$apacheAPI.delete('client/' + item.id + '/')
         .then(res => {
           this.registers.splice(item.id, 1)
+          location.reload()
         })
     },
     setMessages (res) {
