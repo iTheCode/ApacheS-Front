@@ -84,14 +84,14 @@
                       @submit.stop.prevent="handleSubmit"
               >
                   <!-- opciones de la tabla -->
-                  <template slot-scope="row">{{registers.height }}</template>
-                  <template slot-scope="row">{{registers.name}}</template>
+                  <template slot-scope="row">{{registers.id }}</template>
+                  <template slot-scope="row">{{registers.product_name}}</template>
                   <template slot="cantidad" slot-scope="row" @submit.stop.prevent="handleSubmit">
                     <form>
                       <b-form-input v-modal="cantidad" type="number" id="cantidad" :min="1" class="form-control-cantidad" ></b-form-input>
                     </form>
                   </template>
-                  <template slot-scope="row">{{registers.mass}}
+                  <template slot-scope="row">{{registers.unit_price_sale}}
                   </template>
                   <!-- acciones -->
                   <template ref="modal" slot="actions" slot-scope="row">
@@ -108,7 +108,7 @@
               <!--paginacion -->
               <b-row>
               <b-col md="6" class="my-1">
-                  <b-pagination align="right" :total-rows="totalRows" :per-page="perPage" v-model="currentPage" class="my-0 pagination-general" />
+                  <b-pagination align="right" :total-rows="20" :per-page="perPage" v-model="currentPage" class="my-0 pagination-general" />
               </b-col>
               </b-row>
 
@@ -130,32 +130,35 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+const registers = []
 export default {
   data () {
     return {
       monto: '',
       cantidades: [],
-      registers: [],
+      registers: registers,
       fields: [
-        {key: 'height', label: 'codigo'},
-        { key: 'name', label: 'producto', sortable: true, sortDirection: 'desc' },
-        {key: 'cantidad', label: 'cantidad'},
-        { key: 'mass', label: 'precio' },
+        {key: 'id', label: '#'},
+        { key: 'product_name', label: 'Nombre de Producto' },
+        {key: 'cantidad', label: 'Cantidad'},
+        { key: 'description', label: 'Descriptición' },
+        { key: 'unit_price_sale', label: 'Precio' },
         { key: 'actions', label: 'Acciones' }
       ],
       currentPage: 1,
       perPage: 5,
       filter: null,
-      modalProduct: { title: '', content: '', precio: '', cantidad: '' }
+      totalRows: registers.length,
+      modalProduct: { id: '', product_name: '', unit_price_sale: '', cantidad: '' }
     }
   },
   mounted () {
-    axios
-      .get('https://swapi.co/api/people/')
+    this.$apacheAPI.get('product/')
       .then(res => {
-        console.log(res)
-        this.registers = res.data.results
+        this.registers = res.data
+      })
+      .catch((error) => {
+        console.log(error)
       })
   },
   computed: {
