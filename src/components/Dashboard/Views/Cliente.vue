@@ -17,7 +17,7 @@
                 <b-input-group>
                     <b-form-input v-model="filter" placeholder="Nombre Del Cliente" />
                     <b-input-group-append>
-                    <b-btn :disabled="!filter" @click="filter = ''" class="btn-clear">Limpiar</b-btn>
+                    <b-btn :disabled="!filter" @click="filter = ''" class="btn-clear"> X </b-btn>
                     </b-input-group-append>
                 </b-input-group>
                 </b-form-group>

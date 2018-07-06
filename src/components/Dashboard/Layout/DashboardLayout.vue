@@ -51,7 +51,7 @@
             <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"> -->
             <i class="icon-user far fa-user-circle text-warning mr-1"></i>
             <label for="" class="bg-dark text-muted text-warning mr-4">{{ this.$store.state.user }}</label>
-            <button class="btn btn-outline-warning my-2 my-sm-0"  @click="logout()">Cerrar Sesion</button>
+            <button class="btn btn-outline-warning my-2 my-sm-0"  @click="logout()">Salir</button>
           </form>
         </nav>
         <!-- content -->
