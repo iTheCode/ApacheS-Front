@@ -15,6 +15,7 @@ Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(VueAxios, axios)
 Vue.prototype.$apacheAPI = apacheAPI
+Vue.prototype.$user = store.state.user
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
