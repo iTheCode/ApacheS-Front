@@ -154,8 +154,7 @@
                 <b-form-input v-model="editDialog.phone" name="phone"></b-form-input>
             </b-form-group>
           <div class="d-flex justify-content-end">
-            <b-btn class="" variant="dark">Guardar</b-btn>
-            <input v-model="confirmDialog.id" name="id" type="hidden" required>
+            <b-btn class="" variant="dark" @click="updateRegister(editDialog)">Guardar</b-btn>
           </div>
         </form>
     </b-modal>
@@ -172,7 +171,6 @@
 </div>
 </template>
 <script>
-import qs from 'qs'
 const registers = []
 export default {
   data () {
@@ -251,20 +249,11 @@ export default {
           location.reload()
         })
     },
-    updateRegister (e) {
-      var obj = {'name': this.name, 'quantity': this.quantity, 'description': this.description}
-      // console.log(obj)
-      var strngObj = qs.stringify(obj)
-      console.log(this.id)
-      console.log(strngObj)
-      this.$apacheAPI.put('provider/', this.id,
-        strngObj, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }
-        })
+    updateRegister (item) {
+      var obj = { 'name': item.name, 'company': item.company, 'first_name': item.first_name, 'last_name': item.last_name, 'dni': item.dni, 'phone': item.phone }
+      this.$apacheAPI.put('provider/' + item.id + '/', obj)
         .then(res => {
-          this.setMessages(res)
+          location.reload()
         })
     },
     deleteConfirm (index) {
@@ -286,7 +275,7 @@ export default {
       //   .catch((error) => {
       //     console.log(error)
       //   })
-      this.$apacheAPI.delete('Provider/' + this.id)
+      this.$apacheAPI.delete('provider/' + this.id)
         .then(res => {
           this.registers.splice(index, 1)
         })
