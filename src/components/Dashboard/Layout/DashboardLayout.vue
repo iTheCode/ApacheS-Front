@@ -50,8 +50,8 @@
           <form class="form-inline">
             <!-- <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"> -->
             <i class="icon-user far fa-user-circle text-warning mr-1"></i>
-            <label for="" class="bg-dark text-muted text-warning mr-4">Renzo Ipanaque</label>
-            <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Cerrar seccion</button>
+            <label for="" class="bg-dark text-muted text-warning mr-4">{{ this.$store.state.user }}</label>
+            <button class="btn btn-outline-warning my-2 my-sm-0"  @click="logout()">Cerrar Sesion</button>
           </form>
         </nav>
         <!-- content -->
@@ -136,14 +136,10 @@ export default {
     return {
     }
   },
-  created () {
-    this.$apacheAPI.get('users/')
-      .then((response) => {
-        // console.log(response)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+  methods: {
+    logout () {
+      this.$store.dispatch('closeToken')
+    }
   }
 }
 </script>

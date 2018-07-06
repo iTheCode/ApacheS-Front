@@ -10,6 +10,8 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     jwt: localStorage.getItem('t'),
+    user: localStorage.getItem('user'),
+
     endpoints: {
       obtainJWT: 'http://api.a-pachestore.com/v1/auth/obtain_token/',
       refreshJWT: 'http://api.a-pachestore.com/v1/auth/refresh_token/'
@@ -17,12 +19,16 @@ const store = new Vuex.Store({
   },
   mutations: {
     updateToken (state, newToken) {
-      localStorage.setItem('t', newToken)
-      state.jwt = newToken
+      localStorage.setItem('t', newToken.token)
+      localStorage.setItem('user', newToken.user)
+      state.jwt = newToken.token
+      state.user = newToken.user
     },
     removeToken (state) {
       localStorage.removeItem('t')
+      localStorage.removeItem('user')
       state.jwt = null
+      state.user = null
     }
   },
   actions: {
@@ -30,8 +36,8 @@ const store = new Vuex.Store({
       console.log('executing obtainJWT')
       axios.post(this.state.endpoints.obtainJWT, qs.stringify(payload), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
         .then((response) => {
-          this.commit('updateToken', response.data.token)
-          router.push('DashboardLayout')
+          this.commit('updateToken', { 'token': response.data.token, 'user': payload.username })
+          location.reload()
         })
         .catch((error) => {
           alert('Se ha detectado un error, porfavor ingrese los datos correctamente.')
@@ -46,7 +52,7 @@ const store = new Vuex.Store({
 
       axios.post(this.state.endpoints.refreshJWT, qs.stringify(payload))
         .then((response) => {
-          this.commit('updateToken', response.data.token)
+          this.commit('updateToken', { 'token': response.data.token, 'user': this.state.user })
         })
         .catch((error) => {
           console.log(error)
@@ -68,12 +74,16 @@ const store = new Vuex.Store({
           this.dispatch('refreshToken')
         } else {
           // window.location = '/DashboardLayout'
-          router.push('DashboardLayout')
+          router.push('facturas')
         }
       } else {
         // NO TOKEN THEN SEND TO LOGIN PAGE
         router.push('login')
       }
+    },
+    closeToken () {
+      this.commit('removeToken')
+      router.push('login')
     }
   }
 })

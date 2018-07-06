@@ -86,13 +86,13 @@
                             :label-cols="2"
                             label="DNI"
                             >
-                <b-form-input name="dni" placeholder="DNI"></b-form-input>
+                <b-form-input name="dni" placeholder="DNI" type="number" required></b-form-input>
             </b-form-group>
              <b-form-group horizontal
                             :label-cols="2"
                             label="celular"
                             >
-                <b-form-input name="phone" placeholder="celular"></b-form-input>
+                <b-form-input name="phone" placeholder="celular" required></b-form-input>
             </b-form-group>
           <div class="d-flex justify-content-end">
             <b-btn class="" type="submit" @click="createClient" variant="dark">OK</b-btn>
@@ -118,7 +118,7 @@
                             :label-cols="2"
                             label="DNI"
                             >
-                <b-form-input v-model="editDialog.dni" name="dni"></b-form-input>
+                <b-form-input v-model="editDialog.dni" name="dni" type="number"></b-form-input>
             </b-form-group>
              <b-form-group horizontal
                             :label-cols="2"
@@ -127,7 +127,7 @@
                 <b-form-input v-model="editDialog.phone" name="phone"></b-form-input>
             </b-form-group>
           <div class="d-flex justify-content-end">
-            <b-btn class="" variant="dark" @click="editClient(editDialog, confirmDialog)">Guardar</b-btn>
+            <b-btn class="" variant="dark" @click="editClient(editDialog)">Guardar</b-btn>
           </div>
         </form>
     </b-modal>
@@ -143,7 +143,6 @@
 </div>
 </template>
 <script>
-import qs from 'qs'
 const registers = []
 export default {
   data () {
@@ -211,19 +210,17 @@ export default {
     createClient (index) {
       this.$apacheAPI.post('client/', new FormData(index.target))
         .then(res => {
-          console.log(res)
           location.reload()
         })
     },
     editClient (item) {
-      var obj = {'name': item.first_name, 'dni': item.dni, 'phone': item.phone}
-      console.log(obj)
-      var strngObj = qs.stringify(obj)
-      console.log(strngObj)
-      this.$apacheAPI.put('client/' + item.id + '/', strngObj)
+      var obj = {'first_name': item.first_name, 'last_name': item.last_name, 'dni': item.dni, 'phone': item.phone}
+      this.$apacheAPI.put('client/' + item.id + '/', obj)
         .then(res => {
-          this.editDialog = res.data
           location.reload()
+        })
+        .catch((response) => {
+          console.log(response)
         })
     },
     deleteConfirm (index) {

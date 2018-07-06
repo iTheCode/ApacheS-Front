@@ -120,7 +120,6 @@ export default {
     this.$apacheAPI
       .get('sale/')
       .then(res => {
-        console.log(res)
         this.registers = res.data.results
       })
   },
