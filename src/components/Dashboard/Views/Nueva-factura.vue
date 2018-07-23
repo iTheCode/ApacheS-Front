@@ -125,6 +125,7 @@
                 value : {{this.monto}}
               </p>
               </b-card>
+              <!--cambios-->
       </div>
   </div>
   </div>
